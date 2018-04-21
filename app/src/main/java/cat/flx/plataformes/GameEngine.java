@@ -132,7 +132,7 @@ public class GameEngine {
         return true;
     }
 
-    private Paint paint, paintKeys;
+    private Paint paint, paintKeys, paintScore;
     private int screenWidth, screenHeight, scaledWidth;
     private float scale;
 
@@ -179,6 +179,9 @@ public class GameEngine {
             paint.setTextSize(10);
             paintKeys = new Paint();
             paintKeys.setColor(Color.argb(20, 0, 0, 0));
+            paintScore = new Paint();
+            paintScore.setTextSize(5);
+            paintScore.setColor(Color.BLACK);
         }
 
         // Refresh scale factor if screen has changed sizes
@@ -205,10 +208,6 @@ public class GameEngine {
         // --- SECOND DRAW ROUND (no-scaled)
         canvas.restore();
 
-        // Debugging information on screen
-        String text = "OX=" + offsetX + " OY=" + offsetY;
-        canvas.drawText(text, 0, 20, paint);
-
         // Translucent keyboard on top
         canvas.scale(scale * scaledWidth / 100, scale * SCALED_HEIGHT / 100);
         canvas.drawRect(1, 76, 19, 99, paintKeys);
@@ -217,6 +216,10 @@ public class GameEngine {
         canvas.drawText("»", 28, 92, paint);
         canvas.drawRect(81, 76, 99, 99, paintKeys);
         canvas.drawText("^", 88, 92, paint);
+
+        //draw Score
+        String Score = "Score " + bonk.getTotalScore();
+        canvas.drawText(Score, 2, 10, paintScore);
     }
 
 }

@@ -19,6 +19,7 @@ public class Bonk extends Character {
             { 5 },                                  // 7: Falling right
             { 15 } ,                                // 8: Jumping/falling front
     };
+
     @Override int[][] getAnimations() { return ANIMATIONS; }
 
     private static final int[] NEW_STATES = {
@@ -38,15 +39,19 @@ public class Bonk extends Character {
     private static final int COL_WIDTH = 20;
     private static final int COL_HEIGHT = 32;
 
+    private int totalScore;
+
     public Bonk(GameEngine gameEngine, int x, int y) {
         super(gameEngine, x, y);
         this.reset(x, y);
+        this.totalScore = 0;
     }
 
     private void reset(int x, int y) {
         this.x = x;
         this.y = y;
         this.vx = 2;
+        this.totalScore = 0;
     }
 
     private void changeState(int state) {
@@ -59,6 +64,9 @@ public class Bonk extends Character {
         changeState(3);
     }
 
+    public int getTotalScore(){
+        return this.totalScore;
+    }
 
     @Override void updatePhysics(int delta) {
 
