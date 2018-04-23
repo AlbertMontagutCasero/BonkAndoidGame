@@ -191,7 +191,11 @@ public class GameEngine {
             if (screenWidth * screenHeight == 0) return; // 0 px on screen (not fully loaded)
             // New Scaling factor
             scale = (float) screenHeight / SCALED_HEIGHT;
-            scaledWidth = (int) (screenWidth / scale);
+            scaledWidth = (int) (screenWidth / scale);  // TODO preguntar felix porque se divide
+                                                        // entre la scala, no es la escala de la
+                                                        // altura? en una pantalla vertical esto
+                                                        // daria problemas, la escala siempre se
+                                                        // ha de sacar entre el valor mas pequeño
         }
 
         // --- FIRST DRAW ROUND (scaled)
@@ -216,6 +220,9 @@ public class GameEngine {
         canvas.drawText("»", 28, 92, paint);
         canvas.drawRect(81, 76, 99, 99, paintKeys);
         canvas.drawText("^", 88, 92, paint);
+
+        // pause
+        canvas.drawText("||", 88, 12, paint);
 
         //draw Score
         String Score = "Score " + bonk.getTotalScore();

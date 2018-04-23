@@ -152,6 +152,19 @@ public class Bonk extends Character {
             }
         }
 
+        //Update Score
+        Coin coin;
+        for (int i = 0; i < scene.getCoins().size(); i++ ){
+            coin = scene.getCoins().get(i);
+            if ( this.getCollisionRect().intersect(coin.getCollisionRect()) ){
+                this.totalScore += coin.getScoreValue();
+                scene.getCoins().remove(i);
+
+                break;
+            }
+        }
+
+
         // apply resulting physics
         x = newX;
         y = newY;

@@ -40,6 +40,10 @@ public class Scene {
         enemies = new ArrayList<>();
     }
 
+    public List<Coin> getCoins(){
+        return coins;
+    }
+
     void loadFromFile(int resource) {
         InputStream res = gameEngine.getContext().getResources().openRawResource(resource);
         BufferedReader reader = new BufferedReader(new InputStreamReader(res));
@@ -121,12 +125,12 @@ public class Scene {
         return (GROUND.indexOf(sc) != -1);
     }
 
-    public boolean isWall(int r, int c) {
-        if (r < 0) return false;
-        if (r >= sceneHeight) return false;
-        if (c < 0) return false;
-        if (c >= sceneWidth) return false;
-        char sc = scene[r].charAt(c);
+    public boolean isWall(int row, int col) {
+        if (row < 0) return false;
+        if (row >= sceneHeight) return false;
+        if (col < 0) return false;
+        if (col >= sceneWidth) return false;
+        char sc = scene[row].charAt(col);
         return (WALLS.indexOf(sc) != -1);
     }
 
