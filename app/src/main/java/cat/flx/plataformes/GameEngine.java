@@ -11,7 +11,8 @@ import android.view.MotionEvent;
 
 import cat.flx.plataformes.characters.Bonk;
 
-public class GameEngine {
+public class GameEngine
+{
 
     private static final int UPDATE_DELAY = 50;             // 50ms             => 20 physics/sec
     private static final int INVALIDATES_PER_UPDATE = 2;    // 2 * 50ms = 100ms => 10 redraws/sec
@@ -26,12 +27,28 @@ public class GameEngine {
     private Bonk bonk;
     private Input input;
 
-    Context getContext() { return context; }
-    public Bitmap getBitmap(int index) { return bitmapSet.getBitmap(index); }
-    public Scene getScene() { return scene; }
-    public Input getInput() { return input; }
+    Context getContext()
+    {
+        return context;
+    }
 
-    GameEngine(Context context, GameView gameView) {
+    public Bitmap getBitmap(int index)
+    {
+        return bitmapSet.getBitmap(index);
+    }
+
+    public Scene getScene()
+    {
+        return scene;
+    }
+
+    public Input getInput()
+    {
+        return input;
+    }
+
+    GameEngine(Context context, GameView gameView)
+    {
         // Initialize everything
         this.context = context;
         bitmapSet = new BitmapSet(context);
@@ -47,22 +64,30 @@ public class GameEngine {
         scene.loadFromFile(R.raw.scene3);
 
         // Create Bonk
-        bonk = new Bonk(this, 100,0);
+        bonk = new Bonk(this, 100, 0);
 
         // Program the Handler for engine refresh (physics et al)
         handler = new Handler();
-        Runnable runnable = new Runnable() {
+        Runnable runnable = new Runnable()
+        {
             private long last = 0;
             private int count = 0;
-            @Override public void run() {
+
+            @Override
+            public void run()
+            {
                 handler.postDelayed(this, UPDATE_DELAY);
                 // Delta time between calls
-                if (last == 0) last = System.currentTimeMillis();
+                if (last == 0)
+                {
+                    last = System.currentTimeMillis();
+                }
                 long now = System.currentTimeMillis();
-                int delta = (int)(now - last);
+                int delta = (int) (now - last);
                 last = now;
                 physics(delta);
-                if (++count % INVALIDATES_PER_UPDATE == 0) {
+                if (++count % INVALIDATES_PER_UPDATE == 0)
+                {
                     GameEngine.this.gameView.invalidate();
                     count = 0;
                 }
@@ -72,28 +97,36 @@ public class GameEngine {
     }
 
     // For activity start
-    void start() {
+    void start()
+    {
         audio.startMusic();
     }
 
     // For activity stop
-    void stop() {
+    void stop()
+    {
         audio.stopMusic();
     }
 
     // For activity pause
-    void pause() {
+    void pause()
+    {
         audio.stopMusic();
     }
 
     // For activity resume
-    void resume() {
+    void resume()
+    {
         audio.startMusic();
     }
 
     // Attend user input
-    boolean onTouchEvent(MotionEvent motionEvent) {
-        if (screenHeight * screenWidth == 0) return true;
+    boolean onTouchEvent(MotionEvent motionEvent)
+    {
+        if (screenHeight * screenWidth == 0)
+        {
+            return true;
+        }
         int act = motionEvent.getActionMasked();
         int i = motionEvent.getActionIndex();
         boolean down = (act == MotionEvent.ACTION_DOWN) ||
@@ -101,32 +134,65 @@ public class GameEngine {
         boolean touching = (act != MotionEvent.ACTION_UP) &&
                 (act != MotionEvent.ACTION_POINTER_UP) &&
                 (act != MotionEvent.ACTION_CANCEL);
-        int x = (int)(motionEvent.getX(i)) * 100 / screenWidth;
-        int y = (int)(motionEvent.getY(i)) * 100 / screenHeight;
-        if ((y > 75) && (x < 40)) {
-            if (!touching) input.stopLR();
-            else if (x < 20) input.goLeft();            // LEFT
-            else input.goRight();                       // RIGHT
+        int x = (int) (motionEvent.getX(i)) * 100 / screenWidth;
+        int y = (int) (motionEvent.getY(i)) * 100 / screenHeight;
+        if ((y > 75) && (x < 40))
+        {
+            if (!touching)
+            {
+                input.stopLR();
+            }
+            else if (x < 20)
+            {
+                input.goLeft();            // LEFT
+            }
+            else
+            {
+                input.goRight();                       // RIGHT
+            }
         }
-        else if ((y > 75) && (x > 80) ) {
-            if (down) input.jump();                     // JUMP
+        else if ((y > 75) && (x > 80))
+        {
+            if (down)
+            {
+                input.jump();                     // JUMP
+            }
         }
-        else {
-            if (down) input.pause();                    // DEAD-ZONE
+        else
+        {
+            if (down)
+            {
+                input.pause();                    // DEAD-ZONE
+            }
         }
         return true;
     }
 
     // Testing with keyboard
-    boolean onKeyEvent(KeyEvent keyEvent) {
+    boolean onKeyEvent(KeyEvent keyEvent)
+    {
         boolean down = (keyEvent.getAction() == KeyEvent.ACTION_DOWN);
-        if (!down) return true;
-        switch (keyEvent.getKeyCode()) {
-            case KeyEvent.KEYCODE_Z: input.goLeft(); break;
-            case KeyEvent.KEYCODE_X: input.goRight(); break;
-            case KeyEvent.KEYCODE_M: input.jump(); audio.coin(); break;
-            case KeyEvent.KEYCODE_P: input.pause(); break;
-            default: return false;
+        if (!down)
+        {
+            return true;
+        }
+        switch (keyEvent.getKeyCode())
+        {
+            case KeyEvent.KEYCODE_Z:
+                input.goLeft();
+                break;
+            case KeyEvent.KEYCODE_X:
+                input.goRight();
+                break;
+            case KeyEvent.KEYCODE_M:
+                input.jump();
+                audio.coin();
+                break;
+            case KeyEvent.KEYCODE_P:
+                input.pause();
+                break;
+            default:
+                return false;
         }
         input.setKeyboard(true);
         return true;
@@ -137,7 +203,8 @@ public class GameEngine {
     private float scale;
 
     // Perform physics on all game objects
-    private void physics(int delta) {
+    private void physics(int delta)
+    {
         // Player physics
         bonk.physics(delta);
 
@@ -150,8 +217,13 @@ public class GameEngine {
 
     // Update screen offsets to always have Bonk visible
     private int offsetX = 0, offsetY = 0;
-    private void updateOffsets() {
-        if (scaledWidth * SCALED_HEIGHT == 0) return;
+
+    private void updateOffsets()
+    {
+        if (scaledWidth * SCALED_HEIGHT == 0)
+        {
+            return;
+        }
         int x = bonk.getX();
         int y = bonk.getY();
 
@@ -169,11 +241,16 @@ public class GameEngine {
     }
 
     // Screen redraw
-    void draw(Canvas canvas) {
-        if (scene == null) return;
+    void draw(Canvas canvas)
+    {
+        if (scene == null)
+        {
+            return;
+        }
 
         // Create painters on first draw
-        if (paint == null) {
+        if (paint == null)
+        {
             paint = new Paint();
             paint.setColor(Color.GRAY);
             paint.setTextSize(10);
@@ -185,10 +262,14 @@ public class GameEngine {
         }
 
         // Refresh scale factor if screen has changed sizes
-        if (canvas.getWidth() * canvas.getHeight() != screenWidth * screenHeight) {
+        if (canvas.getWidth() * canvas.getHeight() != screenWidth * screenHeight)
+        {
             screenWidth = canvas.getWidth();
             screenHeight = canvas.getHeight();
-            if (screenWidth * screenHeight == 0) return; // 0 px on screen (not fully loaded)
+            if (screenWidth * screenHeight == 0)
+            {
+                return; // 0 px on screen (not fully loaded)
+            }
             // New Scaling factor
             scale = (float) screenHeight / SCALED_HEIGHT;
             scaledWidth = (int) (screenWidth / scale);  // TODO preguntar felix porque se divide

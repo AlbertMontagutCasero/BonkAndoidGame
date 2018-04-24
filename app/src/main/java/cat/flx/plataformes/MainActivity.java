@@ -7,12 +7,14 @@ import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
 
     GameEngine gameEngine;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // FULL SCREEN GAME, NO ACTION BAR (theme also must be some "no-actionbar")
@@ -34,21 +36,31 @@ public class MainActivity extends AppCompatActivity {
 
     // Delegate methods to GameEngine
 
-    @Override public void onResume() {
+    @Override
+    public void onResume()
+    {
         super.onResume();
         gameEngine.resume();
     }
-    @Override public void onPause() {
+
+    @Override
+    public void onPause()
+    {
         super.onPause();
         gameEngine.pause();
     }
-    @Override public void onDestroy() {
+
+    @Override
+    public void onDestroy()
+    {
         super.onDestroy();
         gameEngine.stop();
     }
 
     // For keyboard input
-    @Override public boolean dispatchKeyEvent(KeyEvent event) {
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event)
+    {
         return (gameEngine == null) || gameEngine.onKeyEvent(event);
     }
 
