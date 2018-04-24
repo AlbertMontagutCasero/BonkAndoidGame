@@ -5,14 +5,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
-class Audio
+public class Audio
 {
     private MediaPlayer mediaPlayer;    // media player for background music
     private SoundPool soundPool;        // sound pool for sound effects
     private int[] fx;                   // sound effects holder
     private static final int[] fxRes = {R.raw.coin, R.raw.die, R.raw.pause};
 
-    Audio(Context context)
+    public Audio(Context context)
     {
         // Prepping the media player
         mediaPlayer = MediaPlayer.create(context, R.raw.music);
@@ -29,12 +29,12 @@ class Audio
     }
 
     // Start & stop music
-    void startMusic()
+    public void startMusic()
     {
         mediaPlayer.start();
     }
 
-    void stopMusic()
+    public void stopMusic()
     {
         mediaPlayer.pause();
     }
@@ -45,17 +45,17 @@ class Audio
     }
 
     // Useful methods
-    void coin()
+    public void coin()
     {
         playEffect(0);
     }
 
-    void die()
+    public void die()
     {
         playEffect(1);
     }
 
-    void pause()
+    public void pause()
     {
         playEffect(2);
     }

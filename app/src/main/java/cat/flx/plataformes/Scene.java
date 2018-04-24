@@ -47,6 +47,11 @@ public class Scene
         return coins;
     }
 
+    public List<Enemy> getEnemies()
+    {
+        return enemies;
+    }
+
     void loadFromFile(int resource)
     {
         InputStream res = gameEngine.getContext().getResources().openRawResource(resource);
@@ -222,11 +227,11 @@ public class Scene
         {
             coin.physics(delta);
         }
+
         for (Enemy enemy : enemies)
         {
             enemy.physics(delta);
         }
-
     }
 
     // Scene draw

@@ -7,11 +7,14 @@ import android.graphics.Rect;
 
 import cat.flx.plataformes.GameEngine;
 
-abstract public class Character
+public abstract class Character
 {
     GameEngine gameEngine;
     private Paint paint;
-    int x, y, state, sprite;
+    int x;
+    int y;
+    int state;
+    int sprite;
     Rect collisionRect;
 
     public int getX()
@@ -42,6 +45,11 @@ abstract public class Character
         this.collisionRect = new Rect();
     }
 
+    public Rect getCollisionRect()
+    {
+        return collisionRect;
+    }
+
     int[][] getAnimations()
     {
         return null;
@@ -51,11 +59,6 @@ abstract public class Character
     {
         this.updatePhysics(delta);
         updateCollisionRect();
-    }
-
-    Rect getCollisionRect()
-    {
-        return collisionRect;
     }
 
     public void draw(Canvas canvas)
@@ -77,6 +80,5 @@ abstract public class Character
     }
 
     abstract void updatePhysics(int delta);
-
     abstract void updateCollisionRect();
 }

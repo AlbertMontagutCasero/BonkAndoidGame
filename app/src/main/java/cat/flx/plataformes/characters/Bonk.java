@@ -2,9 +2,15 @@ package cat.flx.plataformes.characters;
 
 import android.graphics.Rect;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import cat.flx.plataformes.Audio;
 import cat.flx.plataformes.GameEngine;
 import cat.flx.plataformes.Input;
 import cat.flx.plataformes.Scene;
+
+import static java.lang.Thread.sleep;
 
 public class Bonk extends Character
 {
@@ -36,21 +42,26 @@ public class Bonk extends Character
     private int vx;         // vel-X is 1 or 2 (boosted velocity)
     private int vy;
     private boolean isJumping;
-    private static final int MAX_VELOCITY = 4;
+    private static final int MAX_FALL_VELOCITY = 4;
     private static final int JUMP_VELOCITY = -8;
 
     private static final int PAD_LEFT = 2;
     private static final int PAD_TOP = 0;
-    private static final int COL_WIDTH = 20;
-    private static final int COL_HEIGHT = 32;
+    private static final int COLLISION_WIDTH = 20;
+    private static final int COLLISION_HEIGHT = 32;
 
     private int totalScore;
+    private int life;
 
-    public Bonk(GameEngine gameEngine, int x, int y)
+    private Audio audio;
+
+    public Bonk(GameEngine gameEngine, Audio audio, int x, int y)
     {
         super(gameEngine, x, y);
         this.reset(x, y);
         this.totalScore = 0;
+        this.life = 3;
+        this.audio = audio;
     }
 
     private void reset(int x, int y)
@@ -58,7 +69,6 @@ public class Bonk extends Character
         this.x = x;
         this.y = y;
         this.vx = 2;
-        this.totalScore = 0;
     }
 
     private void changeState(int state)
@@ -73,7 +83,16 @@ public class Bonk extends Character
 
     public void die()
     {
+        downLife();
         changeState(3);
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                reset(100, 0);
+            }
+        }, 5*1000);
     }
 
     public int getTotalScore()
@@ -81,10 +100,29 @@ public class Bonk extends Character
         return this.totalScore;
     }
 
+    public void setTotalScore(int score)
+    {
+        this.totalScore = score;
+    }
+
+    public void addTotalScore(int scoreToAdd)
+    {
+        this.totalScore += scoreToAdd;
+    }
+
+    public int getLife()
+    {
+        return this.life;
+    }
+
+    public void downLife()
+    {
+        this.life--;
+    }
+
     @Override
     void updatePhysics(int delta)
     {
-
         // If died, no physics
         if (state == 3)
         {
@@ -124,14 +162,14 @@ public class Bonk extends Character
         int newY = y;
         if (vx > 0)
         {
-            int col = (newX + PAD_LEFT + COL_WIDTH) / 16;
+            int col = (newX + PAD_LEFT + COLLISION_WIDTH) / 16;
             int r1 = (newY + PAD_TOP) / 16;
-            int r2 = (newY + PAD_TOP + COL_HEIGHT - 1) / 16;
+            int r2 = (newY + PAD_TOP + COLLISION_HEIGHT - 1) / 16;
             for (int row = r1; row <= r2; row++)
             {
                 if (scene.isWall(row, col))
                 {
-                    newX = col * 16 - PAD_LEFT - COL_WIDTH - 1;
+                    newX = col * 16 - PAD_LEFT - COLLISION_WIDTH - 1;
                     break;
                 }
             }
@@ -141,7 +179,7 @@ public class Bonk extends Character
         {
             int col = (newX + PAD_LEFT) / 16;
             int r1 = (newY + PAD_TOP) / 16;
-            int r2 = (newY + PAD_TOP + COL_HEIGHT - 1) / 16;
+            int r2 = (newY + PAD_TOP + COLLISION_HEIGHT - 1) / 16;
             for (int row = r1; row <= r2; row++)
             {
                 if (scene.isWall(row, col))
@@ -155,21 +193,21 @@ public class Bonk extends Character
         // 3) detect ground
         // physics (try fall and detect ground)
         vy++;
-        if (vy > MAX_VELOCITY)
+        if (vy > MAX_FALL_VELOCITY)
         {
-            vy = MAX_VELOCITY;
+            vy = MAX_FALL_VELOCITY;
         }
         newY = y + vy;
         if (vy >= 0)
         {
             int c1 = (newX + PAD_LEFT) / 16;
-            int c2 = (newX + PAD_LEFT + COL_WIDTH) / 16;
-            int row = (newY + PAD_TOP + COL_HEIGHT) / 16;
+            int c2 = (newX + PAD_LEFT + COLLISION_WIDTH) / 16;
+            int row = (newY + PAD_TOP + COLLISION_HEIGHT) / 16;
             for (int col = c1; col <= c2; col++)
             {
                 if (scene.isGround(row, col))
                 {
-                    newY = row * 16 - PAD_TOP - COL_HEIGHT;
+                    newY = row * 16 - PAD_TOP - COLLISION_HEIGHT;
                     vy = 0;
                     isJumping = false;
                     break;
@@ -180,7 +218,7 @@ public class Bonk extends Character
         if (vy < 0)
         {
             int c1 = (newX + PAD_LEFT) / 16;
-            int c2 = (newX + PAD_LEFT + COL_WIDTH) / 16;
+            int c2 = (newX + PAD_LEFT + COLLISION_WIDTH) / 16;
             int row = (newY + PAD_TOP) / 16;
             for (int col = c1; col <= c2; col++)
             {
@@ -200,10 +238,21 @@ public class Bonk extends Character
             coin = scene.getCoins().get(i);
             if (this.getCollisionRect().intersect(coin.getCollisionRect()))
             {
-                this.totalScore += coin.getScoreValue();
+                this.addTotalScore(coin.getScoreValue());
+                audio.coin();
                 scene.getCoins().remove(i);
-
                 break;
+            }
+        }
+
+        Enemy enemy;
+        for (int i = 0; i < scene.getEnemies().size(); i++)
+        {
+            enemy = scene.getEnemies().get(i);
+            if (this.getCollisionRect().intersect(enemy.getCollisionRect()))
+            {
+                this.die();
+                return;
             }
         }
 
@@ -214,8 +263,8 @@ public class Bonk extends Character
 
         // screen limits
         x = Math.max(x, -PAD_LEFT);
-        x = Math.min(x, scene.getWidth() - COL_WIDTH);
-        y = Math.min(y, scene.getHeight() - COL_HEIGHT);
+        x = Math.min(x, scene.getWidth() - COLLISION_WIDTH);
+        y = Math.min(y, scene.getHeight() - COLLISION_HEIGHT);
 
         // state change
         int c = (vx < 0) ? 0 : ((vx == 0) ? 1 : 2);
@@ -229,8 +278,8 @@ public class Bonk extends Character
         collisionRect.set(
                 x + PAD_LEFT,
                 y + PAD_TOP,
-                x + PAD_LEFT + COL_WIDTH,
-                y + PAD_TOP + COL_HEIGHT
+                x + PAD_LEFT + COLLISION_WIDTH,
+                y + PAD_TOP + COLLISION_HEIGHT
         );
     }
 

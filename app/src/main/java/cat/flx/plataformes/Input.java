@@ -4,8 +4,6 @@ public class Input
 {
     private boolean left, right, jump, pause;
 
-    // FAST SETTERS
-
     public void goLeft()
     {
         left = true;
@@ -47,8 +45,6 @@ public class Input
     {
         pause = false;
     }
-
-    // FAST GETTERS
 
     public boolean isLeft()
     {

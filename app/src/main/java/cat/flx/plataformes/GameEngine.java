@@ -10,6 +10,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import cat.flx.plataformes.characters.Bonk;
+import cat.flx.plataformes.characters.Coin;
+import cat.flx.plataformes.characters.Enemy;
 
 public class GameEngine
 {
@@ -26,6 +28,8 @@ public class GameEngine
     private Scene scene;
     private Bonk bonk;
     private Input input;
+    private int startBonkPositionX = 100;
+    private int startBonkPositionY = 0;
 
     Context getContext()
     {
@@ -64,7 +68,7 @@ public class GameEngine
         scene.loadFromFile(R.raw.scene3);
 
         // Create Bonk
-        bonk = new Bonk(this, 100, 0);
+        bonk = new Bonk(this, audio, startBonkPositionX, startBonkPositionY);
 
         // Program the Handler for engine refresh (physics et al)
         handler = new Handler();
@@ -129,11 +133,14 @@ public class GameEngine
         }
         int act = motionEvent.getActionMasked();
         int i = motionEvent.getActionIndex();
+
         boolean down = (act == MotionEvent.ACTION_DOWN) ||
                 (act == MotionEvent.ACTION_POINTER_DOWN);
+
         boolean touching = (act != MotionEvent.ACTION_UP) &&
                 (act != MotionEvent.ACTION_POINTER_UP) &&
                 (act != MotionEvent.ACTION_CANCEL);
+
         int x = (int) (motionEvent.getX(i)) * 100 / screenWidth;
         int y = (int) (motionEvent.getY(i)) * 100 / screenHeight;
         if ((y > 75) && (x < 40))
@@ -144,25 +151,25 @@ public class GameEngine
             }
             else if (x < 20)
             {
-                input.goLeft();            // LEFT
+                input.goLeft(); // LEFT
             }
             else
             {
-                input.goRight();                       // RIGHT
+                input.goRight(); // RIGHT
             }
         }
         else if ((y > 75) && (x > 80))
         {
             if (down)
             {
-                input.jump();                     // JUMP
+                input.jump(); // JUMP
             }
         }
         else
         {
             if (down)
             {
-                input.pause();                    // DEAD-ZONE
+                input.pause(); // DEAD-ZONE
             }
         }
         return true;

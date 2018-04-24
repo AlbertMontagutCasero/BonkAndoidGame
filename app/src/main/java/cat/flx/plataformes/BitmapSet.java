@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 class BitmapSet
 {
 
-    private Bitmap[] bitmaps;       // all the bitmaps will be held here
+    private Bitmap[] bitmaps; // all the bitmaps will be held here
 
     Bitmap getBitmap(int index)
     {
@@ -26,9 +26,9 @@ class BitmapSet
         opts.inScaled = false;
         Bitmap bitmapsBMP = BitmapFactory.decodeResource(context.getResources(), R.raw.bonk, opts);
         // Prepping the transformations for image rotation
-        Matrix rot1 = new Matrix();     // no-rotation
+        Matrix rot1 = new Matrix(); // no-rotation
         Matrix rot2 = new Matrix();
-        rot2.setScale(-1, 1);    // flip horizontal
+        rot2.setScale(-1, 1); // flip horizontal
 
         // Load the sprite's and tile's definition file
         InputStream in = context.getResources().openRawResource(R.raw.bonkinfo);
@@ -58,6 +58,7 @@ class BitmapSet
                 {
                     continue;    // empty lines are skipped
                 }
+
                 int id = Integer.parseInt(parts[0]);
                 int x = Integer.parseInt(parts[1]);
                 int y = Integer.parseInt(parts[2]);
@@ -65,6 +66,7 @@ class BitmapSet
                 int h = Integer.parseInt(parts[4]);
                 int r = Integer.parseInt(parts[5]);
                 Matrix m = (r == 1) ? rot2 : rot1;
+
                 // Get the portion of the original Bitmap and store it in the array
                 Bitmap bitmap = Bitmap.createBitmap(bitmapsBMP, x, y, w, h, m, true);
                 bitmaps[id] = bitmap;
