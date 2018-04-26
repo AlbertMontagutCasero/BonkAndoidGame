@@ -32,6 +32,7 @@ public class Scene
 
     private List<Coin> coins;
     private List<Enemy> enemies;
+    private List<Booster> boosters;
 
     Scene(GameEngine gameEngine)
     {
@@ -41,6 +42,7 @@ public class Scene
         WATERLEVEL = 999;
         coins = new ArrayList<>();
         enemies = new ArrayList<>();
+        boosters = new ArrayList<>();
     }
 
     public List<Coin> getCoins()
@@ -51,6 +53,11 @@ public class Scene
     public List<Enemy> getEnemies()
     {
         return enemies;
+    }
+
+    public List<Booster> getBoosters()
+    {
+        return boosters;
     }
 
 
@@ -127,6 +134,17 @@ public class Scene
                         int coinY = Integer.parseInt(parts2[1].trim()) * 16;
                         Coin coin = new Coin(gameEngine, coinX, coinY);
                         coins.add(coin);
+                        break;
+                    case "BOOSTER":
+                        parts2 = args.split(",");
+                        if (parts2.length != 2)
+                        {
+                            continue;
+                        }
+                        int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
+                        int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
+                        Booster booster = new Booster(gameEngine, boosterX, boosterY);
+                        boosters.add(booster);
                         break;
                     case "CRAB":
                         parts2 = args.split(",");
@@ -234,6 +252,11 @@ public class Scene
         {
             enemy.physics(delta);
         }
+
+        for (Booster booster : boosters)
+        {
+            booster.physics(delta);
+        }
     }
 
     // Scene draw
@@ -287,10 +310,17 @@ public class Scene
         {
             coin.draw(canvas);
         }
+
+        for (Booster booster : boosters)
+        {
+            booster.draw(canvas);
+        }
+
         for (Enemy enemy : enemies)
         {
             enemy.draw(canvas);
         }
+
 
     }
 }

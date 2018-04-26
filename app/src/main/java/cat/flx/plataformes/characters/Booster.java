@@ -2,10 +2,6 @@ package cat.flx.plataformes.characters;
 
 import cat.flx.plataformes.GameEngine;
 
-/**
- * Created by alber on 26/04/2018.
- */
-
 public class Booster extends Character
 {
     public Booster(GameEngine gameEngine, int x, int y)
@@ -13,7 +9,15 @@ public class Booster extends Character
         super(gameEngine, x, y);
     }
 
+    @Override
+    int[][] getAnimations()
+    {
+        return ANIMATIONS;
+    }
 
+    private static final int[][] ANIMATIONS = new int[][]{
+            new int[]{54,52,53,55}
+    };
 
     @Override
     void updatePhysics(int delta)
@@ -24,6 +28,6 @@ public class Booster extends Character
     @Override
     void updateCollisionRect()
     {
-
+        collisionRect.set(x, y, x + 16, y + 16);
     }
 }

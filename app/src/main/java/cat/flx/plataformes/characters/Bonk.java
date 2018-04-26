@@ -25,7 +25,7 @@ public class Bonk extends Character
             {4},                                  // 5: Jumping right
             {11},                                 // 6: Falling left
             {5},                                  // 7: Falling right
-            {15},                                // 8: Jumping/falling front
+            {15},                                 // 8: Jumping/falling front
     };
 
     @Override
@@ -44,7 +44,7 @@ public class Bonk extends Character
     private int vy;
     private boolean isJumping;
     private static final int MAX_FALL_VELOCITY = 4;
-    private static final int JUMP_VELOCITY = -8;
+    private static final int JUMP_VELOCITY = -10;
 
     private static final int PAD_LEFT = 2;
     private static final int PAD_TOP = 0;
@@ -87,19 +87,22 @@ public class Bonk extends Character
         downLife();
         changeState(3);
 
-        if(getLife() <= 0){
+        if (getLife() <= 0)
+        {
             gameEngine.setGameOver(true);
             return;
         }
 
         Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        timer.schedule(new TimerTask()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 changeState(0);
                 reset(100, 0);
             }
-        }, 3*1000);
+        }, 3 * 1000);
     }
 
     public int getTotalScore()
@@ -125,6 +128,11 @@ public class Bonk extends Character
     public void downLife()
     {
         this.life--;
+    }
+
+    public void setVX(int newVX)
+    {
+        this.vx = newVX;
     }
 
     @Override
@@ -181,6 +189,7 @@ public class Bonk extends Character
                 }
             }
         }
+
         // 2) detect wall to left
         if (vx < 0)
         {
@@ -221,6 +230,7 @@ public class Bonk extends Character
                 }
             }
         }
+
         // 4) detect ceiling
         if (vy < 0)
         {
@@ -251,6 +261,29 @@ public class Bonk extends Character
                 break;
             }
         }
+
+        Booster booster;
+        for (int i = 0; i < scene.getBoosters().size(); i++)
+        {
+            booster = scene.getBoosters().get(i);
+            if (this.getCollisionRect().intersect(booster.getCollisionRect()))
+            {
+                this.vx = 4;
+                scene.getBoosters().remove(i);
+
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask()
+                {
+                    @Override
+                    public void run()
+                    {
+                        setVX(2);
+                    }
+                }, 3 * 1000);
+                break;
+            }
+        }
+
 
         Enemy enemy;
         for (int i = 0; i < scene.getEnemies().size(); i++)
