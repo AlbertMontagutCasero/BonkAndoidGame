@@ -143,7 +143,7 @@ public class Scene
                         }
                         int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
                         int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
-                        Booster booster = new Booster(gameEngine, boosterX, boosterY);
+                        Booster booster = new Booster(gameEngine, boosterX, boosterY,30);
                         boosters.add(booster);
                         break;
                     case "CRAB":
@@ -242,7 +242,6 @@ public class Scene
     // Scene physics
     void physics(int delta)
     {
-
         for (Coin coin : coins)
         {
             coin.physics(delta);
@@ -320,7 +319,5 @@ public class Scene
         {
             enemy.draw(canvas);
         }
-
-
     }
 }

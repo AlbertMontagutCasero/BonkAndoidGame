@@ -53,23 +53,29 @@ public class Bonk extends Character
 
     private int totalScore;
     private int life;
+    private int boostedVelocity;
+    private int normalVelocity;
 
     private Audio audio;
 
     public Bonk(GameEngine gameEngine, Audio audio, int x, int y)
     {
         super(gameEngine, x, y);
-        this.reset(x, y);
+
         this.totalScore = 0;
         this.life = 3;
         this.audio = audio;
+        this.boostedVelocity = 4;
+        this.normalVelocity = 2;
+
+        reset(x, y);
     }
 
     private void reset(int x, int y)
     {
         this.x = x;
         this.y = y;
-        this.vx = 2;
+        this.vx = normalVelocity;
     }
 
     private void changeState(int state)
@@ -268,7 +274,7 @@ public class Bonk extends Character
             booster = scene.getBoosters().get(i);
             if (this.getCollisionRect().intersect(booster.getCollisionRect()))
             {
-                this.vx = 4;
+                this.vx = boostedVelocity;
                 scene.getBoosters().remove(i);
 
                 Timer timer = new Timer();
@@ -277,13 +283,12 @@ public class Bonk extends Character
                     @Override
                     public void run()
                     {
-                        setVX(2);
+                        setVX(normalVelocity);
                     }
-                }, 3 * 1000);
+                }, booster.getSecondsDuration() * 1000);
                 break;
             }
         }
-
 
         Enemy enemy;
         for (int i = 0; i < scene.getEnemies().size(); i++)
