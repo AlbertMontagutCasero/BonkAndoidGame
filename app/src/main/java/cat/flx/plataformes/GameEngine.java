@@ -10,8 +10,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import cat.flx.plataformes.characters.Bonk;
-import cat.flx.plataformes.characters.Coin;
-import cat.flx.plataformes.characters.Enemy;
 
 public class GameEngine
 {
@@ -30,6 +28,9 @@ public class GameEngine
     private Input input;
     private int startBonkPositionX = 100;
     private int startBonkPositionY = 0;
+
+    private boolean gamePaused;
+    private boolean gameOver;
 
     Context getContext()
     {
@@ -69,6 +70,10 @@ public class GameEngine
 
         // Create Bonk
         bonk = new Bonk(this, audio, startBonkPositionX, startBonkPositionY);
+
+        //Initialize gameState
+        gamePaused = false;
+        gameOver = false;
 
         // Program the Handler for engine refresh (physics et al)
         handler = new Handler();
@@ -124,6 +129,10 @@ public class GameEngine
         audio.startMusic();
     }
 
+    public void setGameOver(boolean b){
+        gameOver = b;
+    }
+
     // Attend user input
     boolean onTouchEvent(MotionEvent motionEvent)
     {
@@ -141,8 +150,10 @@ public class GameEngine
                 (act != MotionEvent.ACTION_POINTER_UP) &&
                 (act != MotionEvent.ACTION_CANCEL);
 
+
         int x = (int) (motionEvent.getX(i)) * 100 / screenWidth;
         int y = (int) (motionEvent.getY(i)) * 100 / screenHeight;
+
         if ((y > 75) && (x < 40))
         {
             if (!touching)
@@ -158,18 +169,15 @@ public class GameEngine
                 input.goRight(); // RIGHT
             }
         }
+        else if ((y < 15) && (x > 80))
+        {
+            input.pause();
+        }
         else if ((y > 75) && (x > 80))
         {
             if (down)
             {
                 input.jump(); // JUMP
-            }
-        }
-        else
-        {
-            if (down)
-            {
-                input.pause(); // DEAD-ZONE
             }
         }
         return true;
@@ -206,12 +214,32 @@ public class GameEngine
     }
 
     private Paint paint, paintKeys, paintScore;
-    private int screenWidth, screenHeight, scaledWidth;
+    private int screenWidth;
+    private int screenHeight;
+    private int scaledWidth;
     private float scale;
 
     // Perform physics on all game objects
     private void physics(int delta)
     {
+        if (input.isPaused())
+        {
+            if (gamePaused)
+            {
+                gamePaused = false;
+            }
+            else
+            {
+                gamePaused = true;
+            }
+            input.clearPause();
+        }
+
+        if (gamePaused)
+        {
+            return;
+        }
+
         // Player physics
         bonk.physics(delta);
 
@@ -279,11 +307,7 @@ public class GameEngine
             }
             // New Scaling factor
             scale = (float) screenHeight / SCALED_HEIGHT;
-            scaledWidth = (int) (screenWidth / scale);  // TODO preguntar felix porque se divide
-                                                        // entre la scala, no es la escala de la
-                                                        // altura? en una pantalla vertical esto
-                                                        // daria problemas, la escala siempre se
-                                                        // ha de sacar entre el valor mas pequeño
+            scaledWidth = (int) (screenWidth / scale);
         }
 
         // --- FIRST DRAW ROUND (scaled)
@@ -300,6 +324,16 @@ public class GameEngine
         // --- SECOND DRAW ROUND (no-scaled)
         canvas.restore();
 
+
+        Bitmap bitmapLife = this.getBitmap(12);
+        int imageLifeSize = 32;
+        int marginLeft;
+        for (int i = 0; i < bonk.getLife(); i++)
+        {
+            marginLeft = (int) (screenWidth * 0.7) + imageLifeSize * i;
+            canvas.drawBitmap(this.getBitmap(12), marginLeft, 15, null);
+        }
+
         // Translucent keyboard on top
         canvas.scale(scale * scaledWidth / 100, scale * SCALED_HEIGHT / 100);
         canvas.drawRect(1, 76, 19, 99, paintKeys);
@@ -315,6 +349,20 @@ public class GameEngine
         //draw Score
         String Score = "Score " + bonk.getTotalScore();
         canvas.drawText(Score, 2, 10, paintScore);
+
+        if (gameOver){
+            canvas.drawText("Game Over", 30, 35, paintScore);
+            return;
+        }
+
+        if (gamePaused)
+        {
+            canvas.drawText("Paused", 30, 35, paintScore);
+        }
+
+
+
+
     }
 
 }

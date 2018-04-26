@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import cat.flx.plataformes.characters.Booster;
 import cat.flx.plataformes.characters.Coin;
 import cat.flx.plataformes.characters.Crab;
 import cat.flx.plataformes.characters.Enemy;
@@ -51,6 +52,7 @@ public class Scene
     {
         return enemies;
     }
+
 
     void loadFromFile(int resource)
     {

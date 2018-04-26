@@ -15,6 +15,7 @@ public class Input
         left = false;
         right = true;
     }
+    public void disableInput() {}
 
     public void stopLR()
     {
@@ -76,7 +77,7 @@ public class Input
         return jump & !left & !right;
     }
 
-    public boolean isPause()
+    public boolean isPaused()
     {
         return pause;
     }

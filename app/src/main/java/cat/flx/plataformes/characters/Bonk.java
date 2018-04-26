@@ -10,6 +10,7 @@ import cat.flx.plataformes.GameEngine;
 import cat.flx.plataformes.Input;
 import cat.flx.plataformes.Scene;
 
+import static java.lang.Thread.getAllStackTraces;
 import static java.lang.Thread.sleep;
 
 public class Bonk extends Character
@@ -86,13 +87,19 @@ public class Bonk extends Character
         downLife();
         changeState(3);
 
+        if(getLife() <= 0){
+            gameEngine.setGameOver(true);
+            return;
+        }
+
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                changeState(0);
                 reset(100, 0);
             }
-        }, 5*1000);
+        }, 3*1000);
     }
 
     public int getTotalScore()
@@ -124,7 +131,7 @@ public class Bonk extends Character
     void updatePhysics(int delta)
     {
         // If died, no physics
-        if (state == 3)
+        if (state == 3 || (getLife() <= 0))
         {
             return;
         }

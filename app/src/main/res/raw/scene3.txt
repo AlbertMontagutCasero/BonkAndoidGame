@@ -34,5 +34,7 @@ COIN   = 35,8
 COIN   = 40,8
 COIN   = 42,8
 
+BOOSTER = 5,14
+
 CRAB   = 2,11,14
 CRAB   = 35,42,8
