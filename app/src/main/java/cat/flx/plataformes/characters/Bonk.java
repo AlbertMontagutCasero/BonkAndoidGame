@@ -141,6 +141,11 @@ public class Bonk extends Character
         this.vx = newVX;
     }
 
+    public int getVx()
+    {
+        return this.vx;
+    }
+
     @Override
     void updatePhysics(int delta)
     {
@@ -300,7 +305,6 @@ public class Bonk extends Character
                 return;
             }
         }
-
 
         // apply resulting physics
         x = newX;

@@ -129,7 +129,8 @@ public class GameEngine
         audio.startMusic();
     }
 
-    public void setGameOver(boolean b){
+    public void setGameOver(boolean b)
+    {
         gameOver = b;
     }
 
@@ -334,6 +335,15 @@ public class GameEngine
             canvas.drawBitmap(this.getBitmap(12), marginLeft, 15, null);
         }
 
+
+        if (bonk.getVx() == 4) // boosted velocity
+        {   canvas.save();
+            canvas.scale(2.0f, 2.0f);
+            canvas.drawBitmap(this.getBitmap(52), 5, 30, null);
+            canvas.restore();
+        }
+
+
         // Translucent keyboard on top
         canvas.scale(scale * scaledWidth / 100, scale * SCALED_HEIGHT / 100);
         canvas.drawRect(1, 76, 19, 99, paintKeys);
@@ -350,7 +360,8 @@ public class GameEngine
         String Score = "Score " + bonk.getTotalScore();
         canvas.drawText(Score, 2, 10, paintScore);
 
-        if (gameOver){
+        if (gameOver)
+        {
             canvas.drawText("Game Over", 30, 35, paintScore);
             return;
         }
@@ -359,9 +370,6 @@ public class GameEngine
         {
             canvas.drawText("Paused", 30, 35, paintScore);
         }
-
-
-
 
     }
 
