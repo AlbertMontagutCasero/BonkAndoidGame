@@ -177,7 +177,10 @@ public class GameEngine
         }
         else if ((y < 15) && (x > 80))
         {
-            input.pause();
+           if (down){
+               input.pause();
+           }
+
         }
         else if ((y > 75) && (x > 80))
         {
