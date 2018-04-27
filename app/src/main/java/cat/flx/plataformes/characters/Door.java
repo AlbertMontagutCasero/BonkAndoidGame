@@ -2,17 +2,31 @@ package cat.flx.plataformes.characters;
 
 import cat.flx.plataformes.GameEngine;
 
-/**
- * Created by alber on 26/04/2018.
- */
-
 public class Door extends Character
 {
 
-    public Door(GameEngine gameEngine, int x, int y)
+    private int sceneToLoad;
+
+    public Door(GameEngine gameEngine, int x, int y, int sceneToLoad)
     {
         super(gameEngine, x, y);
+        this.sceneToLoad = sceneToLoad;
     }
+
+    private static final int[][] ANIMATIONS = new int[][]{
+            new int[]{56}
+    };
+
+    public int getSceneToLoad(){
+        return this.sceneToLoad;
+    }
+
+    @Override
+    int[][] getAnimations()
+    {
+        return ANIMATIONS;
+    }
+
 
     @Override
     void updatePhysics(int delta)
@@ -23,6 +37,6 @@ public class Door extends Character
     @Override
     void updateCollisionRect()
     {
-
+        collisionRect.set(x, y, x + 24, y + 32 );
     }
 }

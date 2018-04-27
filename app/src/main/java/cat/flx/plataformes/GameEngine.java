@@ -202,10 +202,12 @@ public class GameEngine
                 break;
             case KeyEvent.KEYCODE_M:
                 input.jump();
-                audio.coin();
                 break;
             case KeyEvent.KEYCODE_P:
                 input.pause();
+                break;
+            case KeyEvent.KEYCODE_0:
+                scene.changeToLevel(R.raw.scene3);
                 break;
             default:
                 return false;

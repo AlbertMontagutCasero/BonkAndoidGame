@@ -17,6 +17,7 @@ import java.util.List;
 import cat.flx.plataformes.characters.Booster;
 import cat.flx.plataformes.characters.Coin;
 import cat.flx.plataformes.characters.Crab;
+import cat.flx.plataformes.characters.Door;
 import cat.flx.plataformes.characters.Enemy;
 
 public class Scene
@@ -25,14 +26,20 @@ public class Scene
     private String scene[];
     private Paint paint;
 
-    private int sceneWidth, sceneHeight;
+    private int sceneWidth;
+    private int sceneHeight;
     private SparseIntArray CHARS;
-    private String GROUND, WALLS;
-    private int WATERLEVEL, SKY, WATERSKY, WATER;
+    private String GROUND;
+    private String WALLS;
+    private int WATERLEVEL;
+    private int SKY;
+    private int WATERSKY;
+    private int WATER;
 
     private List<Coin> coins;
     private List<Enemy> enemies;
     private List<Booster> boosters;
+    private List<Door> doors;
 
     Scene(GameEngine gameEngine)
     {
@@ -43,6 +50,7 @@ public class Scene
         coins = new ArrayList<>();
         enemies = new ArrayList<>();
         boosters = new ArrayList<>();
+        doors = new ArrayList<>();
     }
 
     public List<Coin> getCoins()
@@ -58,6 +66,26 @@ public class Scene
     public List<Booster> getBoosters()
     {
         return boosters;
+    }
+
+    public List<Door> getDoors()
+    {
+        return doors;
+    }
+
+    private void reset()
+    {
+        coins.clear();
+        enemies.clear();
+        boosters.clear();
+        doors.clear();
+        CHARS.clear();
+    }
+
+    public void changeToLevel(int resource)
+    {
+        reset();
+        loadFromFile(resource);
     }
 
 
@@ -137,14 +165,28 @@ public class Scene
                         break;
                     case "BOOSTER":
                         parts2 = args.split(",");
-                        if (parts2.length != 2)
+                        if (parts2.length != 3)
                         {
                             continue;
                         }
                         int boosterX = Integer.parseInt(parts2[0].trim()) * 16;
                         int boosterY = Integer.parseInt(parts2[1].trim()) * 16;
-                        Booster booster = new Booster(gameEngine, boosterX, boosterY,30);
+                        int duration = Integer.parseInt(parts2[2].trim());
+                        Booster booster = new Booster(gameEngine, boosterX, boosterY, duration);
                         boosters.add(booster);
+                        break;
+                    case "DOOR":
+                        parts2 = args.split(",");
+                        if (parts2.length != 2)
+                        {
+                            continue;
+                        }
+                        int doorX = Integer.parseInt(parts2[0].trim()) * 16;
+                        int doorY = Integer.parseInt(parts2[1].trim()) * 16;
+                        //TODO indicate scene to load from file
+                        // String sceneToLoad = parts2[2].trim();
+                        Door door = new Door(gameEngine, doorX, doorY, R.raw.mini);
+                        doors.add(door);
                         break;
                     case "CRAB":
                         parts2 = args.split(",");
@@ -170,25 +212,25 @@ public class Scene
         }
     }
 
-    public boolean isGround(int r, int c)
+    public boolean isGround(int row, int col)
     {
-        if (r < 0)
+        if (row < 0)
         {
             return false;
         }
-        if (r >= sceneHeight)
+        if (row >= sceneHeight)
         {
             return false;
         }
-        if (c < 0)
+        if (col < 0)
         {
             return false;
         }
-        if (c >= sceneWidth)
+        if (col >= sceneWidth)
         {
             return false;
         }
-        char sc = scene[r].charAt(c);
+        char sc = scene[row].charAt(col);
         return (GROUND.indexOf(sc) != -1);
     }
 
@@ -256,6 +298,11 @@ public class Scene
         {
             booster.physics(delta);
         }
+
+        for (Door door : doors)
+        {
+            door.physics(delta);
+        }
     }
 
     // Scene draw
@@ -305,6 +352,11 @@ public class Scene
             }
         }
 
+        for (Door door : doors)
+        {
+            door.draw(canvas);
+        }
+
         for (Coin coin : coins)
         {
             coin.draw(canvas);
@@ -319,5 +371,7 @@ public class Scene
         {
             enemy.draw(canvas);
         }
+
+
     }
 }

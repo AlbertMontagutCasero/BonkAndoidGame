@@ -6,6 +6,7 @@ public class Booster extends Character
 {
 
     private int secondsDuration;
+
     private static final int[][] ANIMATIONS = new int[][]{
             new int[]{54,52,53,55}
     };

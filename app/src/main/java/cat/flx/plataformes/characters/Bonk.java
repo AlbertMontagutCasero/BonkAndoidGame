@@ -306,6 +306,17 @@ public class Bonk extends Character
             }
         }
 
+        Door door;
+        for (int i = 0; i < scene.getDoors().size(); i++)
+        {
+            door = scene.getDoors().get(i);
+            if (this.getCollisionRect().intersect(door.getCollisionRect()))
+            {
+                scene.changeToLevel(door.getSceneToLoad());
+                return;
+            }
+        }
+
         // apply resulting physics
         x = newX;
         y = newY;

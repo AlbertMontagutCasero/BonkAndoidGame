@@ -31,8 +31,7 @@ public class Coin extends Character
 
     @Override
     void updatePhysics(int delta)
-    {
-    }
+    {}
 
     @Override
     void updateCollisionRect()
