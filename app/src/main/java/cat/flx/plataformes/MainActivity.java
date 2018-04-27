@@ -1,7 +1,10 @@
 package cat.flx.plataformes;
 
+
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Window;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         // Create the engine
         gameEngine = new GameEngine(this, gameView);
         gameEngine.start();
+
     }
 
     // Delegate methods to GameEngine
@@ -39,6 +43,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume()
     {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int totalScore = sharedPreferences.getInt("totalScore" , 0);
+        gameEngine.getBonk().setTotalScore(totalScore);
+
         super.onResume();
         gameEngine.resume();
     }
@@ -46,8 +55,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPause()
     {
-        super.onPause();
         gameEngine.pause();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor ed = sharedPreferences.edit();
+        int totalScore = gameEngine.getBonk().getTotalScore();
+        ed.putInt("totalScore", totalScore);
+        ed.apply();
+
+        super.onPause();
+
     }
 
     @Override

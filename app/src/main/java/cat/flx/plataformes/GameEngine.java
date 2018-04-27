@@ -52,6 +52,11 @@ public class GameEngine
         return input;
     }
 
+    public Bonk getBonk()
+    {
+        return this.bonk;
+    }
+
     GameEngine(Context context, GameView gameView)
     {
         // Initialize everything
@@ -374,5 +379,6 @@ public class GameEngine
         }
 
     }
+
 
 }
